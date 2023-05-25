@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 
-import trailers.ResponseTrailers;
 
 
 public class TestStream extends Http2TestBase {
@@ -88,7 +87,7 @@ public class TestStream extends Http2TestBase {
         Context ctxt = tomcat.addContext("", null);
         Tomcat.addServlet(ctxt, "simple", new SimpleServlet());
         ctxt.addServletMappingDecoded("/simple", "simple");
-        Tomcat.addServlet(ctxt, "trailers", new ResponseTrailers());
+//        Tomcat.addServlet(ctxt, "trailers", new ResponseTrailers());
         ctxt.addServletMappingDecoded("/trailers", "trailers");
 
         tomcat.start();

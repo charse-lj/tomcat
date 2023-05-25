@@ -215,6 +215,9 @@ public class NioBlockingSelector {
     }
 
 
+    /**
+     * 守护线程 --> 启动.
+     */
     protected static class BlockPoller extends Thread {
         protected volatile boolean run = true;
         protected Selector selector = null;
@@ -353,6 +356,7 @@ public class NioBlockingSelector {
                         SelectionKey sk = iterator.next();
                         NioSocketWrapper socketWrapper = (NioSocketWrapper) sk.attachment();
                         try {
+                            //移除事件
                             iterator.remove();
                             sk.interestOps(sk.interestOps() & (~sk.readyOps()));
                             if (sk.isReadable()) {

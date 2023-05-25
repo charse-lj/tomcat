@@ -59,6 +59,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 
 /**
+ * socket 接收器和发送器 --> 用来处理TCP协议
+ *
+ *
  * NIO量身定制的线程池，并提供以下服务：
  * - Socket接收线程
  * - Socket轮询线程
@@ -241,9 +244,14 @@ public class NioEndpoint extends AbstractJsseEndpoint<NioChannel, SocketChannel>
     // implement custom [server]sockets
     protected void initServerSocket() throws Exception {
         if (!getUseInheritedChannel()) {
+            //底层本质是申请一个fd
             serverSock = ServerSocketChannel.open();
+            //serverSock.socket() --> 本质是创建一个对象,内部包含ServerSocketChannel
+            //为其配置属性
             socketProperties.setProperties(serverSock.socket());
+            //地址、端口
             InetSocketAddress addr = new InetSocketAddress(getAddress(), getPortWithOffset());
+            //fd绑定地址、端口.
             serverSock.socket().bind(addr, getAcceptCount());
         } else {
             // Retrieve the channel provided by the OS

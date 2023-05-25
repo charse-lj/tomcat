@@ -72,15 +72,10 @@ public final class Bootstrap {
      * 一般不特别设置,catalina.home = catalina.base = System.getProperty("user.dir")
      */
     static {
-        System.out.println("Bootstrap static{} executor");
-        System.out.println("=========== all system properties start ==========");
-        System.getProperties().stringPropertyNames().forEach(k-> System.out.println("  "+k+" --> "+System.getProperty(k)));
-        System.out.println("=========== all system properties end ==========");
         // 获取用户目录
         // Will always be non-null
         String userDir = System.getProperty("user.dir");
 
-        System.out.println("System.getProperty(user.dir): userDir -->" + userDir);
         // 第一步，从环境变量中获取catalina.home，在没有获取到的时候将执行后面的获取操作
         // Home first --> 'catalina.home'
         String home = System.getProperty(Globals.CATALINA_HOME_PROP);
@@ -125,10 +120,8 @@ public final class Bootstrap {
 
         catalinaHomeFile = homeFile;
 
-        System.out.println("设置系统属性:catalina.home-->" + catalinaHomeFile.getPath());
         //设置全局变量
-        System.setProperty(
-                Globals.CATALINA_HOME_PROP, catalinaHomeFile.getPath());
+        System.setProperty(Globals.CATALINA_HOME_PROP, catalinaHomeFile.getPath());
 
         // Then base
         // 接下来获取CATALINA_BASE（从系统变量中获取），若不存在，则将CATALINA_BASE保持和CATALINA_HOME相同
@@ -144,9 +137,7 @@ public final class Bootstrap {
             }
             catalinaBaseFile = baseFile;
         }
-        System.out.println("设置系统属性:catalina.base -->" + catalinaBaseFile.getPath());
-        System.setProperty(
-                Globals.CATALINA_BASE_PROP, catalinaBaseFile.getPath());
+        System.setProperty(Globals.CATALINA_BASE_PROP, catalinaBaseFile.getPath());
     }
 
     // -------------------------------------------------------------- Variables
@@ -216,6 +207,7 @@ public final class Bootstrap {
                 continue;
             } catch (MalformedURLException e) {
                 // Ignore
+                e.printStackTrace();
             }
 
             // Local repository
@@ -238,6 +230,8 @@ public final class Bootstrap {
     /**
      * System property replacement in the given string.
      *
+     * 不支持嵌套.
+     *
      * @param str The original string
      * @return the modified string
      */
@@ -247,25 +241,25 @@ public final class Bootstrap {
         //局部变量result
         String result = str;
         //占位符前缀位置
-        int pos_start = str.indexOf("${");
+        int posStart = str.indexOf("${");
         //存在占位符
-        if (pos_start >= 0) {
+        if (posStart >= 0) {
             StringBuilder builder = new StringBuilder();
             //占位符后缀位置变量
-            int pos_end = -1;
-            while (pos_start >= 0) {
+            int posEnd = -1;
+            while (posStart >= 0) {
                 //取str的(pos_end+1)开始,到pos_start位置字符
-                builder.append(str, pos_end + 1, pos_start);
+                builder.append(str, posEnd + 1, posStart);
                 //从指定位置获取占位符后缀位置
-                pos_end = str.indexOf('}', pos_start + 2);
-                if (pos_end < 0) {
+                posEnd = str.indexOf('}', posStart + 2);
+                if (posEnd < 0) {
                     //不存在
-                    pos_end = pos_start - 1;
+                    posEnd = posStart - 1;
                     //跳出
                     break;
                 }
                 //取占位符中字符
-                String propName = str.substring(pos_start + 2, pos_end);
+                String propName = str.substring(posStart + 2, posEnd);
                 String replacement;
                 if (propName.length() == 0) {
                     replacement = null;
@@ -280,12 +274,12 @@ public final class Bootstrap {
                 if (replacement != null) {
                     builder.append(replacement);
                 } else {
-                    builder.append(str, pos_start, pos_end + 1);
+                    builder.append(str, posStart, posEnd + 1);
                 }
                 //更新开始位置
-                pos_start = str.indexOf("${", pos_end + 1);
+                posStart = str.indexOf("${", posEnd + 1);
             }
-            builder.append(str, pos_end + 1, str.length());
+            builder.append(str, posEnd + 1, str.length());
             result = builder.toString();
         }
         return result;
@@ -515,7 +509,7 @@ public final class Bootstrap {
                 // Don't set daemon until init() has completed
                 Bootstrap bootstrap = new Bootstrap();
                 try {
-                    /** 1、初始化 bootstrap */
+                    /* 1、初始化 bootstrap */
                     bootstrap.init();
                 } catch (Throwable t) {
                     handleThrowable(t);
@@ -550,7 +544,6 @@ public final class Bootstrap {
                 daemon.setAwait(true);
                 /** 2、内部反射调用 Catalina.load() */
                 daemon.load(args);
-                System.out.println("=========== all component init,prepared to start ========");
                 /** 3、内部反射调用了 Catalina.start() */
                 daemon.start();
                 if (null == daemon.getServer()) {

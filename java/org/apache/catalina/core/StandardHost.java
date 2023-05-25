@@ -203,7 +203,21 @@ public class StandardHost extends ContainerBase implements Host {
         return this.appBase;
     }
 
+    /**
+     * 添加监听器
+     * @param listener The listener to add
+     */
+    @Override
+    public void addLifecycleListener(LifecycleListener listener) {
+        super.addLifecycleListener(listener);
+    }
 
+
+    @Override
+    protected void initInternal() throws LifecycleException {
+        //配置任务处理器
+        super.initInternal();
+    }
     /**
      * ({@inheritDoc}
      */

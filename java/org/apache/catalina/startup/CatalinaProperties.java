@@ -16,6 +16,9 @@
  */
 package org.apache.catalina.startup;
 
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,9 +26,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
-
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 
 
 /**
@@ -91,7 +91,7 @@ public class CatalinaProperties {
         if (is == null) {
             try {
                 is = CatalinaProperties.class.getResourceAsStream
-                    ("/org/apache/catalina/startup/catalina.properties");
+                        ("/org/apache/catalina/startup/catalina.properties");
             } catch (Throwable t) {
                 handleThrowable(t);
             }
@@ -122,13 +122,16 @@ public class CatalinaProperties {
 
         // Register the properties as system properties
         Enumeration<?> enumeration = properties.propertyNames();
+        System.out.println("CatalinaProperties start============");
         while (enumeration.hasMoreElements()) {
             String name = (String) enumeration.nextElement();
             String value = properties.getProperty(name);
+            System.out.println(name + "---->" + value);
             if (value != null) {
                 System.setProperty(name, value);
             }
         }
+        System.out.println("CatalinaProperties end============");
     }
 
 

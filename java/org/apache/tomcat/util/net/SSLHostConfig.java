@@ -886,6 +886,9 @@ public class SSLHostConfig implements Serializable {
     // ----------------------------------------------------------- Inner classes
 
     public enum Type {
+        /**
+         * JSSE，Java Secure Socket Extension 为基于SSL和TLS协议的Java网络应用程序提供了Java API以及参考实现
+         */
         JSSE,
         OPENSSL
     }

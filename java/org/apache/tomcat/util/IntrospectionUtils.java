@@ -60,6 +60,7 @@ public final class IntrospectionUtils {
         String setter = "set" + capitalize(name);
 
         try {
+            //获取所有的方法
             Method methods[] = findMethods(o.getClass());
             Method setPropertyMethodVoid = null;
             Method setPropertyMethodBool = null;

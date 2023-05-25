@@ -22,8 +22,8 @@ import org.xml.sax.Attributes;
 /**
  * Concrete implementations of this class implement actions to be taken when
  * a corresponding nested pattern of XML elements has been matched.
+ * 此类实现类实现了当XML元素的相应嵌套模式匹配时要采取的措施。
  */
-// 此类的具体实现类实现了当XML元素的相应嵌套模式已匹配时要采取的措施。
 public abstract class Rule {
 
     protected static final StringManager sm = StringManager.getManager(Rule.class);
@@ -114,6 +114,9 @@ public abstract class Rule {
      */
     public void begin(String namespace, String name, Attributes attributes) throws Exception {
         // NO-OP by default.
+        System.out.println("namespace:"+namespace);
+        System.out.println("name:"+name);
+        System.out.println("attributes:"+attributes);
     }
 
 

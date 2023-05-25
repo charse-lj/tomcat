@@ -48,6 +48,8 @@ import javax.servlet.UnavailableException;
  */
 
 /**
+ *  某一种类型的servlet对象集合
+ *
  * Wrapper是一个容器，它代表了Web应用程序的部署描述符的个人servlet定义。
  * 它提供了一个方便的机制来使用拦截器（Interceptors）看到每一个单个的请求由该定义表示的servlet。
  *

@@ -43,7 +43,7 @@ public class CatalinaBaseConfigurationSource implements ConfigurationSource {
     public CatalinaBaseConfigurationSource(File catalinaBaseFile, String serverXmlPath) {
         this.catalinaBaseFile = catalinaBaseFile;
         catalinaBaseUri = catalinaBaseFile.toURI();
-        // ‘conf/server.xml’
+        // conf/server.xml
         this.serverXmlPath = serverXmlPath;
     }
 

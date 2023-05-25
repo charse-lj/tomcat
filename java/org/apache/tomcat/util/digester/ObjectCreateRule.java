@@ -68,7 +68,7 @@ public class ObjectCreateRule extends Rule {
 
     /**
      * The attribute containing an override class name if it is present.
-     * 如果该节点有className属性, 用节点中className的值替换默认实体类
+     * 如果attributeName不为空, 获取节点属性对象中attributeName值的属性值替换默认实体类
      */
     protected String attributeName = null;
 
@@ -76,7 +76,7 @@ public class ObjectCreateRule extends Rule {
     /**
      * The Java class name of the object to be created.
      *
-     * 对应的默认实体类权限定名称.
+     * 对应的默认实体类全限定名称.
      */
     protected String className = null;
 
