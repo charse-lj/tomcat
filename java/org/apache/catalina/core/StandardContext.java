@@ -180,6 +180,7 @@ public class StandardContext extends ContainerBase
     protected boolean allowCasualMultipartParsing = false;
 
     /**
+     * 用于处理部分上传或中断的上传请求,启用 swallowAbortedUploads 时，服务器会尝试忽略那些被客户端中断的上传请求，而不是抛出异常或返回错误响应
      * Control whether remaining request data will be read
      * (swallowed) even if the request violates a data size constraint.
      */
@@ -187,6 +188,7 @@ public class StandardContext extends ContainerBase
 
     /**
      * The alternate deployment descriptor name.
+     * 主要用于指定替代的部署描述符（deployment descriptor）文件名。在 Java Web 应用中，部署描述符通常是 web.xml 文件，它包含了应用的基本配置信息。altDDName 允许你指定一个不同的 XML 文件作为部署描述符
      */
     private String altDDName = null;
 
@@ -199,6 +201,7 @@ public class StandardContext extends ContainerBase
 
     /**
      * The antiResourceLocking flag for this Context.
+     * 防止在处理 HTTP 请求时出现资源锁定的问题
      */
     private boolean antiResourceLocking = false;
 
@@ -312,12 +315,14 @@ public class StandardContext extends ContainerBase
     /**
      * Should we allow the <code>ServletContext.getContext()</code> method
      * to access the context of other web applications in this server?
+     * 用于控制 Tomcat 中的会话（session）共享
      */
     private boolean crossContext = false;
 
 
     /**
      * Encoded path.
+     * 用于控制 Tomcat 如何处理 URL 路径中的编码
      */
     private String encodedPath = null;
 
@@ -338,17 +343,23 @@ public class StandardContext extends ContainerBase
     private boolean delegate = JreCompat.isGraalAvailable();
 
 
+    /**
+     *
+     * 可以控制 Tomcat 是否拒绝未被 Servlet 映射覆盖的 HTTP 方法
+     */
     private boolean denyUncoveredHttpMethods;
 
 
     /**
      * The display name of this web application.
+     * 定 Web 应用在管理界面和其他工具中的显示名称
      */
     private String displayName = null;
 
 
     /**
      * Override the default context xml location.
+     * 指定全局的上下文配置文件路径
      */
     private String defaultContextXml;
 
@@ -361,12 +372,14 @@ public class StandardContext extends ContainerBase
 
     /**
      * The distributable flag for this web application.
+     * 制 Web 应用是否支持分布式会话
      */
     private boolean distributable = false;
 
 
     /**
      * The document root for this web application.
+     * 指定 Web 应用的文档基础目录
      */
     private String docBase = null;
 
@@ -774,6 +787,9 @@ public class StandardContext extends ContainerBase
 
     private String webappVersion = "";
 
+    /**
+     * 将 WEB-INF/classes 目录中的资源添加到 WebResourceRoot 中
+     */
     private boolean addWebinfClassesResources = false;
 
     private boolean fireRequestListenersOnForwards = false;

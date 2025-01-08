@@ -1175,7 +1175,6 @@ public class Digester extends DefaultHandler2 {
         if ((name == null) || (name.length() < 1)) {
             name = qName;
         }
-
         // Compute the current matching rule
         StringBuilder sb = new StringBuilder(match);
         if (match.length() > 0) {

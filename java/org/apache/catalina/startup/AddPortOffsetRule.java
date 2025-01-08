@@ -27,6 +27,7 @@ public class AddPortOffsetRule extends Rule {
     @Override
     public void begin(String namespace, String name, Attributes attributes) throws Exception {
 
+        super.begin(namespace, name, attributes);
         Connector conn = (Connector) digester.peek();
         Server server = (Server) digester.peek(2);
 

@@ -70,10 +70,22 @@ public class StandardRoot extends LifecycleMBeanBase implements WebResourceRoot 
 
     private Context context;
     private boolean allowLinking = false;
+    /**
+     * 用于在文档根目录之前加载资源，通常用于覆盖或补充应用程序中的资源
+     */
     private final List<WebResourceSet> preResources = new ArrayList<>();
     private WebResourceSet main;
+    /**
+     * 管理类路径上的资源
+     */
     private final List<WebResourceSet> classResources = new ArrayList<>();
+    /**
+     * 管理 Web 应用程序中的 JAR 文件资源
+     */
     private final List<WebResourceSet> jarResources = new ArrayList<>();
+    /**
+     * 在文档根目录之后加载资源，通常用于覆盖或补充应用程序中的资源
+     */
     private final List<WebResourceSet> postResources = new ArrayList<>();
 
     private final Cache cache = new Cache(this);
@@ -284,6 +296,7 @@ public class StandardRoot extends LifecycleMBeanBase implements WebResourceRoot 
                         return result;
                     }
                     if (virtual == null) {
+
                         if (result.isVirtual()) {
                             virtual = result;
                         } else if (main.equals(webResourceSet)) {

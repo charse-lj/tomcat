@@ -34,7 +34,8 @@ public abstract class Rule {
      * <p>Base constructor.
      * Now the digester will be set when the rule is added.</p>
      */
-    public Rule() {}
+    public Rule() {
+    }
 
 
     // ----------------------------------------------------- Instance Variables
@@ -79,7 +80,7 @@ public abstract class Rule {
      * Return the namespace URI for which this Rule is relevant, if any.
      *
      * @return The namespace URI for which this rule is relevant or
-     *         <code>null</code> if none.
+     * <code>null</code> if none.
      */
     public String getNamespaceURI() {
         return namespaceURI;
@@ -90,7 +91,7 @@ public abstract class Rule {
      * Set the namespace URI for which this Rule is relevant, if any.
      *
      * @param namespaceURI Namespace URI for which this Rule is relevant,
-     *  or <code>null</code> to match independent of namespace.
+     *                     or <code>null</code> to match independent of namespace.
      */
     public void setNamespaceURI(String namespaceURI) {
         this.namespaceURI = namespaceURI;
@@ -103,20 +104,33 @@ public abstract class Rule {
      * This method is called when the beginning of a matching XML element
      * is encountered. The default implementation is a NO-OP.
      *
-     * @param namespace the namespace URI of the matching element, or an
-     *                  empty string if the parser is not namespace aware or the
-     *                  element has no namespace
-     * @param name the local name if the parser is namespace aware, or just
-     *             the element name otherwise
+     * @param namespace  the namespace URI of the matching element, or an
+     *                   empty string if the parser is not namespace aware or the
+     *                   element has no namespace
+     * @param name       the local name if the parser is namespace aware, or just
+     *                   the element name otherwise
      * @param attributes The attribute list of this element
-     *
      * @throws Exception if an error occurs while processing the event
      */
     public void begin(String namespace, String name, Attributes attributes) throws Exception {
         // NO-OP by default.
-        System.out.println("namespace:"+namespace);
-        System.out.println("name:"+name);
-        System.out.println("attributes:"+attributes);
+        System.out.println(this.getClass().getName() + ":begin()");
+        String s = "{'namespace':'%s','name':'%s','attrSize':'%s'}";
+        System.out.println(String.format(s, namespace, name, attributes.getLength()));
+        String a = "{'value':'%s','qName':'%s','localName':'%s','type':'%s'}";
+        int al = attributes.getLength();
+        StringBuilder alla = new StringBuilder("attributes").append("\n");
+        for (int i = 0; i < al; i++) {
+            String value = attributes.getValue(i);
+            String qName = attributes.getQName(i);
+            String localName = attributes.getLocalName(i);
+            String type = attributes.getType(i);
+            alla.append(String.format(a, value, qName, localName, type));
+            if (i < al - 1) {
+                alla.append("\n");
+            }
+        }
+        System.out.println(alla);
     }
 
 
@@ -128,14 +142,14 @@ public abstract class Rule {
      * @param namespace the namespace URI of the matching element, or an empty
      *                  string if the parser is not namespace aware or the
      *                  element has no namespace
-     * @param name the local name if the parser is namespace aware, or just the
-     *             element name otherwise
-     * @param text The text of the body of this element
-     *
+     * @param name      the local name if the parser is namespace aware, or just the
+     *                  element name otherwise
+     * @param text      The text of the body of this element
      * @throws Exception if an error occurs while processing the event
      */
     public void body(String namespace, String name, String text) throws Exception {
         // NO-OP by default.
+        System.out.println(this.getClass().getName() + ":body()");
     }
 
 
@@ -146,13 +160,12 @@ public abstract class Rule {
      * @param namespace the namespace URI of the matching element, or an empty
      *                  string if the parser is not namespace aware or the
      *                  element has no namespace
-     * @param name the local name if the parser is namespace aware, or just the
-     *             element name otherwise
-     *
+     * @param name      the local name if the parser is namespace aware, or just the
+     *                  element name otherwise
      * @throws Exception if an error occurs while processing the event
      */
     public void end(String namespace, String name) throws Exception {
-        // NO-OP by default.
+        System.out.println(this.getClass().getName() + ":body()");
     }
 
 

@@ -62,6 +62,9 @@ public class StandardHost extends ContainerBase implements Host {
 
     /**
      * The set of aliases for this Host.
+     * name 属性指定主域名 example.com
+     * aliases 属性指定多个别名 www.example.com,example.org
+     * 当客户端访问 example.com、www.example.com 或 example.org时,Tomcat 会将请求路由到同一个 Host 组件
      */
     private String[] aliases = new String[0];
 
@@ -70,12 +73,14 @@ public class StandardHost extends ContainerBase implements Host {
 
     /**
      * The application root for this Host.
+     * 用于指定 Host 组件的 Web 应用程序基础目录,目录包含了所有部署在该虚拟主机下的 Web 应用程序
      */
     private String appBase = "webapps";
     private volatile File appBaseFile = null;
 
     /**
      * The XML root for this Host.
+     * 指定了 Host 组件下 XML 配置文件的相对路径
      */
     private String xmlBase = null;
 
@@ -86,6 +91,7 @@ public class StandardHost extends ContainerBase implements Host {
 
     /**
      * The auto deploy flag for this Host.
+     * 是否自动部署新添加的 Web 应用程序
      */
     private boolean autoDeploy = true;
 
@@ -93,21 +99,22 @@ public class StandardHost extends ContainerBase implements Host {
     /**
      * The Java class name of the default context configuration class
      * for deployed web applications.
+     * <p>
+     * 用于配置 Host 组件的类
      */
-    private String configClass =
-            "org.apache.catalina.startup.ContextConfig";
+    private String configClass = "org.apache.catalina.startup.ContextConfig";
 
 
     /**
      * The Java class name of the default Context implementation class for
      * deployed web applications.
      */
-    private String contextClass =
-            "org.apache.catalina.core.StandardContext";
+    private String contextClass = "org.apache.catalina.core.StandardContext";
 
 
     /**
      * The deploy on startup flag for this Host.
+     * 用于控制 Web 应用程序是否在 Tomcat 启动时自动部署。这个属性通常用于 Context 元素，可以在 server.xml 文件中进行配置
      */
     private boolean deployOnStartup = true;
 
@@ -122,6 +129,8 @@ public class StandardHost extends ContainerBase implements Host {
      * Should XML files be copied to
      * $CATALINA_BASE/conf/&lt;engine&gt;/&lt;host&gt; by default when
      * a web application is deployed?
+     *
+     * copyXML 是 <Host> 元素的一个属性，用于控制是否将部署的应用程序中的 META-INF/context.xml 文件复制到 Tomcat 的 conf/Catalina/<hostname> 目录下
      */
     private boolean copyXML = false;
 
@@ -130,13 +139,12 @@ public class StandardHost extends ContainerBase implements Host {
      * The Java class name of the default error reporter implementation class
      * for deployed web applications.
      */
-    private String errorReportValveClass =
-            "org.apache.catalina.valves.ErrorReportValve";
+    private String errorReportValveClass = "org.apache.catalina.valves.ErrorReportValve";
 
 
     /**
      * Unpack WARs property.
-     * 解析wars的property
+     * 是否自动解压 .war 文件
      */
     private boolean unpackWARs = true;
 
@@ -165,10 +173,14 @@ public class StandardHost extends ContainerBase implements Host {
      * Any file or directory in {@link #appBase} that this pattern matches will
      * be ignored by the automatic deployment process (both
      * {@link #deployOnStartup} and {@link #autoDeploy}).
+     * 控制哪些文件或目录在自动部署时被忽略,多个模式可以用逗号分隔
      */
     private Pattern deployIgnore = null;
 
 
+    /**
+     * 在自动部署过程中是否卸载旧版本的应用程序
+     */
     private boolean undeployOldVersions = false;
 
     private boolean failCtxIfServletStartFails = false;
@@ -205,6 +217,7 @@ public class StandardHost extends ContainerBase implements Host {
 
     /**
      * 添加监听器
+     *
      * @param listener The listener to add
      */
     @Override
@@ -218,6 +231,7 @@ public class StandardHost extends ContainerBase implements Host {
         //配置任务处理器
         super.initInternal();
     }
+
     /**
      * ({@inheritDoc}
      */
@@ -243,7 +257,7 @@ public class StandardHost extends ContainerBase implements Host {
         }
 
         this.appBaseFile = file;
-        support.firePropertyChange("appBaseFile",null,file);
+        support.firePropertyChange("appBaseFile", null, file);
         return file;
     }
 
@@ -414,8 +428,7 @@ public class StandardHost extends ContainerBase implements Host {
 
         String oldContextClass = this.contextClass;
         this.contextClass = contextClass;
-        support.firePropertyChange("contextClass",
-                oldContextClass, this.contextClass);
+        support.firePropertyChange("contextClass", oldContextClass, this.contextClass);
 
     }
 
@@ -528,7 +541,6 @@ public class StandardHost extends ContainerBase implements Host {
      */
     @Override
     public void setName(String name) {
-        System.out.println(this.getClass()+" setName(String name)");
         if (name == null)
             throw new IllegalArgumentException
                     (sm.getString("standardHost.nullName"));
@@ -693,7 +705,7 @@ public class StandardHost extends ContainerBase implements Host {
      */
     @Override
     public void addChild(Container child) {
-        SelfPrinter.invoke(this,"addChild",child);
+        SelfPrinter.invoke(this, "addChild", child);
         if (!(child instanceof Context))
             throw new IllegalArgumentException
                     (sm.getString("standardHost.notContext"));
@@ -705,7 +717,7 @@ public class StandardHost extends ContainerBase implements Host {
         Context context = (Context) child;
         if (context.getPath() == null) {
             ContextName cn = new ContextName(context.getDocBase(), true);
-            SelfPrinter.printLocalParam(this,"addChild","cn",cn);
+            SelfPrinter.printLocalParam(this, "addChild", "cn", cn);
             context.setPath(cn.getPath());
         }
 
@@ -821,7 +833,7 @@ public class StandardHost extends ContainerBase implements Host {
      */
     @Override
     protected synchronized void startInternal() throws LifecycleException {
-        SelfPrinter.invoke(this,"startInternal");
+        SelfPrinter.invoke(this, "startInternal");
         // Set error report valve
         String errorValve = getErrorReportValveClass();
         if ((errorValve != null) && (!errorValve.equals(""))) {
@@ -850,7 +862,7 @@ public class StandardHost extends ContainerBase implements Host {
             }
         }
         super.startInternal();
-        SelfPrinter.end(this,"startInternal");
+        SelfPrinter.end(this, "startInternal");
     }
 
 

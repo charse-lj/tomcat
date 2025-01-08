@@ -81,7 +81,7 @@ public class FactoryCreateRule extends Rule {
      */
     @Override
     public void begin(String namespace, String name, Attributes attributes) throws Exception {
-
+        super.begin(namespace, name, attributes);
         if (ignoreCreateExceptions) {
 
             if (exceptionIgnoredStack == null) {
@@ -127,7 +127,7 @@ public class FactoryCreateRule extends Rule {
      */
     @Override
     public void end(String namespace, String name) throws Exception {
-
+        super.end(namespace, name);
         // check if object was created
         // this only happens if an exception was thrown and we're ignoring them
         if (

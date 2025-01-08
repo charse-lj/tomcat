@@ -85,6 +85,7 @@ public class FilterDef implements Serializable {
 
     /**
      * The fully qualified name of the Java class that implements this filter.
+     * 类全限定名
      */
     private String filterClass = null;
 
@@ -100,6 +101,7 @@ public class FilterDef implements Serializable {
     /**
      * The name of this filter, which must be unique among the filters
      * defined for a particular web application.
+     * 名称.
      */
     private String filterName = null;
 
@@ -118,6 +120,7 @@ public class FilterDef implements Serializable {
 
     /**
      * The large icon associated with this filter.
+     * 大图标
      */
     private String largeIcon = null;
 
@@ -133,6 +136,7 @@ public class FilterDef implements Serializable {
     /**
      * The set of initialization parameters for this filter, keyed by
      * parameter name.
+     * 参数.
      */
     private final Map<String, String> parameters = new HashMap<>();
 
@@ -143,6 +147,7 @@ public class FilterDef implements Serializable {
 
     /**
      * The small icon associated with this filter.
+     * 小图标.
      */
     private String smallIcon = null;
 

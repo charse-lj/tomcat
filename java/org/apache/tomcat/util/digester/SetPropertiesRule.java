@@ -47,7 +47,7 @@ public class SetPropertiesRule extends Rule {
     @Override
     public void begin(String namespace, String theName, Attributes attributes)
             throws Exception {
-
+        super.begin(namespace, theName, attributes);
         //查看栈顶元素
         Object top = digester.peek();
         if (digester.log.isDebugEnabled()) {

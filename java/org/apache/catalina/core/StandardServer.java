@@ -396,9 +396,7 @@ public final class StandardServer extends LifecycleMBeanBase implements Server {
     @Override
     public void setCatalina(Catalina catalina) {
         this.catalina = catalina;
-        support.firePropertyChange("catalina",
-                null,
-                catalina);
+        support.firePropertyChange("catalina", null, catalina);
     }
 
 

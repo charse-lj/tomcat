@@ -55,6 +55,17 @@ import org.apache.tomcat.util.security.Escape;
  * The digester checks for structural correctness (eg single login-config)
  * This class checks for invalid duplicates (eg filter/servlet names)
  * StandardContext will check validity of values (eg URL formats etc)
+ *
+ * web.xml 应用的 WEB-INF 目录下。这个文件主要用于以下几点
+ * Servlet 注册：定义哪些类是 Servlet 以及它们的映射路径。
+ * 过滤器配置：设置过滤器以及它们的应用范围。
+ * 监听器配置：定义监听器来监听应用程序的不同生命周期事件。
+ * 会话配置：如 session 的超时时间等。
+ * 上下文参数：可以设置一些全局的参数供整个 Web 应用使用。
+ * 欢迎文件列表：指定服务器启动时默认打开的页面。
+ * 错误页面配置：可以指定某些 HTTP 错误码对应的显示页面
+ *
+ * 早期版本中，web.xml 是必不可少的，用于配置各种组件和行为。然而，在 Servlet 3.0 之后，随着注解 (@WebServlet, @WebFilter, @WebListener) 的引入，很多原本需要在 web.xml 中定义的内容可以通过注解来实现，使得 web.xml 变得不那么必须，但在某些情况下仍然会被使用，比如配置上下文参数或错误页等
  */
 public class WebXml extends XmlEncodingBase implements DocumentProperties.Charset {
 
@@ -70,14 +81,19 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
      * Global defaults are overridable but Servlets and Servlet mappings need to
      * be unique. Duplicates normally trigger an error. This flag indicates if
      * newly added Servlet elements are marked as overridable.
+     *  <context-param>
+     *         <param-name>databaseUrl</param-name>
+     *         <param-value>jdbc:mysql://localhost:3306/dev_db</param-value>
+     *         <overridable>true</overridable>
+     *     </context-param>
      */
     private boolean overridable = false;
-    public boolean isOverridable() {
-        return overridable;
-    }
-    public void setOverridable(boolean overridable) {
-        this.overridable = overridable;
-    }
+
+    // servlet-mapping
+    // Note: URLPatterns from web.xml may be URL encoded
+    //       (https://svn.apache.org/r285186)
+    private final Map<String,String> servletMappings = new HashMap<>();
+    private final Set<String> servletMappingNames = new HashSet<>();
 
     /*
      * Ideally, fragment names will be unique. If they are not, Tomcat needs
@@ -85,6 +101,80 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
      * 2.c) varies depending on the ordering method used.
      */
     private boolean duplicated = false;
+
+
+    /**
+     * web-fragment.xml only elements
+     * Relative ordering
+     */
+    private final Set<String> after = new LinkedHashSet<>();
+
+    private final Set<String> before = new LinkedHashSet<>();
+
+    // Is this JAR part of the application or is it a container JAR? Assume it
+    // is.
+    private boolean webappJar = true;
+
+    /**
+     * web.xml only elements
+     * Absolute Ordering
+     */
+    private Set<String> absoluteOrdering = null;
+
+
+    // Optional publicId attribute
+    private String publicId = null;
+
+    // URL of JAR / exploded JAR for this web-fragment
+    private URL uRL = null;
+
+    // Name of jar file
+    private String jarName = null;
+
+    // Does this web application delegate first for class loading?
+    private boolean delegate = false;
+
+
+    // Optional name element
+    private String name = null;
+
+
+    // Optional metadata-complete attribute
+    private boolean metadataComplete = false;
+
+    // ejb-ref
+    // TODO: Should support multiple description elements with language
+    private final Map<String,ContextEjb> ejbRefs = new HashMap<>();
+
+    // security-role
+    // TODO: description (multiple with language) is ignored
+    private final Set<String> securityRoles = new HashSet<>();
+
+    // login-config
+    // Digester will check there is only one of these
+    private LoginConfig loginConfig = null;
+
+    // security-constraint
+    // TODO: Should support multiple display-name elements with language
+    // TODO: Should support multiple description elements with language
+    private final Set<SecurityConstraint> securityConstraints = new HashSet<>();
+
+    // Digester will check there is only one jsp-config
+    // jsp-config/taglib or taglib (2.3 and earlier)
+    private final Map<String,String> taglibs = new HashMap<>();
+
+    // error-page
+    private final Map<String,ErrorPage> errorPages = new HashMap<>();
+
+
+    public boolean isOverridable() {
+        return overridable;
+    }
+    public void setOverridable(boolean overridable) {
+        this.overridable = overridable;
+    }
+
+
     public boolean isDuplicated() {
         return duplicated;
     }
@@ -92,11 +182,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
         this.duplicated = duplicated;
     }
 
-    /**
-     * web.xml only elements
-     * Absolute Ordering
-     */
-    private Set<String> absoluteOrdering = null;
+
     public void createAbsoluteOrdering() {
         if (absoluteOrdering == null) {
             absoluteOrdering = new LinkedHashSet<>();
@@ -114,11 +200,6 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
         return absoluteOrdering;
     }
 
-    /**
-     * web-fragment.xml only elements
-     * Relative ordering
-     */
-    private final Set<String> after = new LinkedHashSet<>();
     public void addAfterOrdering(String fragmentName) {
         after.add(fragmentName);
     }
@@ -131,7 +212,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
     }
     public Set<String> getAfterOrdering() { return after; }
 
-    private final Set<String> before = new LinkedHashSet<>();
+
     public void addBeforeOrdering(String fragmentName) {
         before.add(fragmentName);
     }
@@ -189,8 +270,6 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
 
 
 
-    // Optional publicId attribute
-    private String publicId = null;
     public String getPublicId() { return publicId; }
     public void setPublicId(String publicId) {
         // Update major and minor version
@@ -214,14 +293,10 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
         }
     }
 
-    // Optional metadata-complete attribute
-    private boolean metadataComplete = false;
     public boolean isMetadataComplete() { return metadataComplete; }
     public void setMetadataComplete(boolean metadataComplete) {
         this.metadataComplete = metadataComplete; }
 
-    // Optional name element
-    private String name = null;
     public String getName() { return name; }
     public void setName(String name) {
         if (ORDER_OTHERS.equalsIgnoreCase(name)) {
@@ -251,7 +326,9 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
         this.displayName = displayName;
     }
 
-    // distributable
+    /**
+     * web.xml 文件中的 <distributable> 元素用于指示应用程序是否支持分布式部署。具体来说，<distributable> 元素可以影响会话状态的管理和其他分布式部署相关的配置
+     */
     private boolean distributable = false;
     public boolean isDistributable() { return distributable; }
     public void setDistributable(boolean distributable) {
@@ -327,11 +404,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
     }
     public Map<String,ServletDef> getServlets() { return servlets; }
 
-    // servlet-mapping
-    // Note: URLPatterns from web.xml may be URL encoded
-    //       (https://svn.apache.org/r285186)
-    private final Map<String,String> servletMappings = new HashMap<>();
-    private final Set<String> servletMappingNames = new HashSet<>();
+
     public void addServletMapping(String urlPattern, String servletName) {
         addServletMappingDecoded(UDecoder.URLDecode(urlPattern, getCharset()), servletName);
     }
@@ -395,17 +468,14 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
     }
     public Set<String> getWelcomeFiles() { return welcomeFiles; }
 
-    // error-page
-    private final Map<String,ErrorPage> errorPages = new HashMap<>();
+
     public void addErrorPage(ErrorPage errorPage) {
         errorPage.setCharset(getCharset());
         errorPages.put(errorPage.getName(), errorPage);
     }
     public Map<String,ErrorPage> getErrorPages() { return errorPages; }
 
-    // Digester will check there is only one jsp-config
-    // jsp-config/taglib or taglib (2.3 and earlier)
-    private final Map<String,String> taglibs = new HashMap<>();
+
     public void addTaglib(String uri, String location) {
         if (taglibs.containsKey(uri)) {
             // Taglib URIs must be unique within a web(-fragment).xml
@@ -426,10 +496,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
         return jspPropertyGroups;
     }
 
-    // security-constraint
-    // TODO: Should support multiple display-name elements with language
-    // TODO: Should support multiple description elements with language
-    private final Set<SecurityConstraint> securityConstraints = new HashSet<>();
+
     public void addSecurityConstraint(SecurityConstraint securityConstraint) {
         securityConstraint.setCharset(getCharset());
         securityConstraints.add(securityConstraint);
@@ -438,18 +505,13 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
         return securityConstraints;
     }
 
-    // login-config
-    // Digester will check there is only one of these
-    private LoginConfig loginConfig = null;
+
     public void setLoginConfig(LoginConfig loginConfig) {
         loginConfig.setCharset(getCharset());
         this.loginConfig = loginConfig;
     }
     public LoginConfig getLoginConfig() { return loginConfig; }
 
-    // security-role
-    // TODO: description (multiple with language) is ignored
-    private final Set<String> securityRoles = new HashSet<>();
     public void addSecurityRole(String securityRole) {
         securityRoles.add(securityRole);
     }
@@ -469,9 +531,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
     }
     public Map<String,ContextEnvironment> getEnvEntries() { return envEntries; }
 
-    // ejb-ref
-    // TODO: Should support multiple description elements with language
-    private final Map<String,ContextEjb> ejbRefs = new HashMap<>();
+
     public void addEjbRef(ContextEjb ejbRef) {
         ejbRefs.put(ejbRef.getName(),ejbRef);
     }
@@ -659,24 +719,19 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
 
     // Attributes not defined in web.xml or web-fragment.xml
 
-    // URL of JAR / exploded JAR for this web-fragment
-    private URL uRL = null;
+
     public void setURL(URL url) { this.uRL = url; }
     public URL getURL() { return uRL; }
 
-    // Name of jar file
-    private String jarName = null;
+
     public void setJarName(String jarName) { this.jarName = jarName; }
     public String getJarName() { return jarName; }
 
-    // Is this JAR part of the application or is it a container JAR? Assume it
-    // is.
-    private boolean webappJar = true;
+
     public void setWebappJar(boolean webappJar) { this.webappJar = webappJar; }
     public boolean getWebappJar() { return webappJar; }
 
-    // Does this web application delegate first for class loading?
-    private boolean delegate = false;
+
     public boolean getDelegate() { return delegate; }
     public void setDelegate(boolean delegate) { this.delegate = delegate; }
 
@@ -2171,8 +2226,7 @@ public class WebXml extends XmlEncodingBase implements DocumentProperties.Charse
         if (dest.getMaxRequestSize() == null) {
             dest.setMaxRequestSize(src.getMaxRequestSize());
         } else if (src.getMaxRequestSize() != null) {
-            if (failOnConflict &&
-                    !src.getMaxRequestSize().equals(
+            if (failOnConflict && !src.getMaxRequestSize().equals(
                             dest.getMaxRequestSize())) {
                 return false;
             }

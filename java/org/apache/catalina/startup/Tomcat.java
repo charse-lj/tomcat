@@ -194,10 +194,16 @@ public class Tomcat {
     protected String hostname = "localhost";
     protected String basedir;
 
+    //用户的密码配置
     private final Map<String, String> userPass = new HashMap<>();
+    //用户的角色配置
     private final Map<String, List<String>> userRoles = new HashMap<>();
+    //是已认证用户的身份表示,通常包含用户名和相关角色
     private final Map<String, Principal> userPrincipals = new HashMap<>();
 
+    /**
+     * 默认情况下，每个Web应用程序都需要有一个 web.xml 文件来定义其部署描述符。然而，在某些情况下，Web应用程序可能没有显式提供 web.xml 文件。这时，Tomcat 可以自动提供一个默认的 web.xml 文件，以确保应用程序能够正常运行
+     */
     private boolean addDefaultWebXmlToWebapp = true;
 
     public Tomcat() {
@@ -293,8 +299,7 @@ public class Tomcat {
         // Make sure a conflicting web application has not already been deployed
         Host h = getHost();
         if (h.findChild(cn.getName()) != null) {
-            throw new IllegalArgumentException(sm.getString("tomcat.addWebapp.conflictChild",
-                    source, contextPath, cn.getName()));
+            throw new IllegalArgumentException(sm.getString("tomcat.addWebapp.conflictChild", source, contextPath, cn.getName()));
         }
 
         // Make sure appBase does not contain a conflicting web application
@@ -302,12 +307,10 @@ public class Tomcat {
         File targetDir = new File(h.getAppBaseFile(), cn.getBaseName());
 
         if (targetWar.exists()) {
-            throw new IllegalArgumentException(sm.getString("tomcat.addWebapp.conflictFile",
-                    source, contextPath, targetWar.getAbsolutePath()));
+            throw new IllegalArgumentException(sm.getString("tomcat.addWebapp.conflictFile", source, contextPath, targetWar.getAbsolutePath()));
         }
         if (targetDir.exists()) {
-            throw new IllegalArgumentException(sm.getString("tomcat.addWebapp.conflictFile",
-                    source, contextPath, targetDir.getAbsolutePath()));
+            throw new IllegalArgumentException(sm.getString("tomcat.addWebapp.conflictFile", source, contextPath, targetDir.getAbsolutePath()));
         }
 
         // Should be good to copy the WAR now
@@ -930,6 +933,7 @@ public class Tomcat {
         "org.apache.catalina.core.AprLifecycleListener"
     };
 
+    //用于控制日志记录器的行为
     private boolean silent = false;
 
     /**
@@ -1326,7 +1330,7 @@ public class Tomcat {
             }
         }
         SecurityClassLoad.securityClassLoad(Thread.currentThread().getContextClassLoader());
-        org.apache.catalina.startup.Tomcat tomcat = new org.apache.catalina.startup.Tomcat();
+        Tomcat tomcat = new Tomcat();
         // Create a Catalina instance and let it parse the configuration files  （建一个Catalina实例，让它解析配置文件）
         // It will also set a shutdown hook to stop the Server when needed      （它也会设置一个shutdown hook来停止Server如果有需要的话）
         // Use the default configuration source                                 （使用默认的配置源）

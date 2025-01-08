@@ -85,7 +85,7 @@ public class StoreFactoryRule extends Rule {
     @Override
     public void begin(String namespace, String name, Attributes attributes)
             throws Exception {
-
+        super.begin(namespace, name, attributes);
         IStoreFactory factory = (IStoreFactory) newInstance(attributeName,
                 storeFactoryClass, attributes);
         StoreAppender storeAppender = (StoreAppender) newInstance(

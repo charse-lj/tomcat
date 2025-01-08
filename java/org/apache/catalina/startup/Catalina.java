@@ -860,7 +860,7 @@ final class SetParentClassLoaderRule extends Rule {
     @Override
     public void begin(String namespace, String name, Attributes attributes)
             throws Exception {
-
+        super.begin(namespace, name, attributes);
         if (digester.getLogger().isDebugEnabled()) {
             digester.getLogger().debug("Setting parent class loader");
         }

@@ -95,6 +95,7 @@ public class StandardJarScanner implements JarScanner {
 
     /**
      * Controls the JAR file Manifest scanning extension.
+     * 用于读取和解析 JAR 文件中的 MANIFEST.MF 文件。MANIFEST.MF 文件包含了 JAR 文件的关键元数据信息，如主类 (Main-Class)、依赖库 (Class-Path) 等
      */
     private boolean scanManifest = true;
     public boolean isScanManifest() {

@@ -133,6 +133,7 @@ public class WebRuleSet implements RuleSet {
      * @param prefix Prefix for matching pattern rules (including the
      *  trailing slash character)
      * @param fragment <code>true</code> if this is a web fragment
+     *                是否是这个node <web-fragment></web-fragment>
      */
     public WebRuleSet(String prefix, boolean fragment) {
         this.prefix = prefix;
@@ -721,7 +722,9 @@ final class SetLoginConfig extends Rule {
 
     @Override
     public void begin(String namespace, String name, Attributes attributes)
+
         throws Exception {
+        super.begin(namespace, name, attributes);
         if (isLoginConfigSet){
             throw new IllegalArgumentException(
             "<login-config> element is limited to 1 occurrence");

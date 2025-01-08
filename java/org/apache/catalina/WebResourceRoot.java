@@ -81,6 +81,7 @@ import java.util.Set;
  *   resource came from
  * - how to handle PUT when the target is read-only but it could be written to
  *   a higher priority ResourceSet that is read-write
+ * 管理 Web 应用程序的资源，这些资源包括但不限于 JSP 文件、静态资源（如 CSS、JavaScript、图片等）和其他相关文件
  */
 public interface WebResourceRoot extends Lifecycle {
     /**
@@ -433,8 +434,14 @@ public interface WebResourceRoot extends Lifecycle {
 
     enum ResourceSetType {
         PRE,
+        /**
+         * 通常用于包含非类文件的 JAR 文件，这些文件不会被类加载器加载，但可以在运行时通过资源管理器访问
+         */
         RESOURCE_JAR,
         POST,
+        /**
+         * 通常用于包含编译后的 Java 类文件的 JAR 文件，这些类文件会被类加载器加载到 JVM 中
+         */
         CLASSES_JAR
     }
 }

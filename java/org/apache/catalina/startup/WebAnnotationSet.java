@@ -84,7 +84,6 @@ public class WebAnnotationSet {
             if (clazz == null) {
                 continue;
             }
-
             loadClassAnnotation(context, clazz);
             loadFieldsAnnotation(context, clazz);
             loadMethodsAnnotation(context, clazz);

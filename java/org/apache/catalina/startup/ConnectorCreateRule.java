@@ -56,6 +56,7 @@ public class ConnectorCreateRule extends Rule {
     @Override
     public void begin(String namespace, String name, Attributes attributes)
             throws Exception {
+        super.begin(namespace, name, attributes);
         Service svc = (Service)digester.peek();
         Executor ex = null;
         if ( attributes.getValue("executor")!=null ) {
@@ -101,6 +102,7 @@ public class ConnectorCreateRule extends Rule {
      */
     @Override
     public void end(String namespace, String name) throws Exception {
+        super.end(namespace, name);
         digester.pop();
     }
 

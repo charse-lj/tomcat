@@ -114,7 +114,7 @@ public class CallParamRule extends Rule {
     @Override
     public void begin(String namespace, String name, Attributes attributes)
             throws Exception {
-
+        super.begin(namespace, name, attributes);
         Object param = null;
 
         if (attributeName != null) {
@@ -161,7 +161,7 @@ public class CallParamRule extends Rule {
     @Override
     public void body(String namespace, String name, String bodyText)
             throws Exception {
-
+        super.body(namespace, name, bodyText);
         if (attributeName == null && !fromStack) {
             // We must wait to set the parameter until end
             // so that we can make sure that the right set of parameters
@@ -179,6 +179,11 @@ public class CallParamRule extends Rule {
      */
     @Override
     public void end(String namespace, String name) {
+        try {
+            super.end(namespace, name);
+        }catch (Exception e){
+            //
+        }
         if (bodyTextStack != null && !bodyTextStack.empty()) {
             // what we do now is push one parameter onto the top set of parameters
             Object parameters[] = (Object[]) digester.peekParams();

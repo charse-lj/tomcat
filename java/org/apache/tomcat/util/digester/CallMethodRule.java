@@ -229,7 +229,7 @@ public class CallMethodRule extends Rule {
     @Override
     public void begin(String namespace, String name, Attributes attributes)
             throws Exception {
-
+        super.begin(namespace, name, attributes);
         // Push an array to capture the parameter values if necessary
         if (paramCount > 0) {
             Object parameters[] = new Object[paramCount];
@@ -255,7 +255,7 @@ public class CallMethodRule extends Rule {
     @Override
     public void body(String namespace, String name, String bodyText)
             throws Exception {
-
+        super.body(namespace, name, bodyText);
         if (paramCount == 0) {
             this.bodyText = bodyText.trim().intern();
         }
@@ -275,7 +275,7 @@ public class CallMethodRule extends Rule {
     @SuppressWarnings("null") // parameters can't trigger NPE
     @Override
     public void end(String namespace, String name) throws Exception {
-
+        super.end(namespace, name);
         // Retrieve or construct the parameter values array
         Object parameters[] = null;
         if (paramCount > 0) {

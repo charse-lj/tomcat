@@ -179,6 +179,8 @@ public class Cookie implements Cloneable, Serializable {
      *            a <code>String</code> specifying the comment to display to the
      *            user
      * @see #getComment
+     *
+     * cookie的备注信息
      */
     public void setComment(String purpose) {
         comment = purpose;
@@ -209,6 +211,8 @@ public class Cookie implements Cloneable, Serializable {
      *            a <code>String</code> containing the domain name within which
      *            this cookie is visible; form is according to RFC 2109
      * @see #getDomain
+     *
+     * Cookie可以被哪些域访问。例如，设置为.example.com意味着所有子域（如www.example.com, sub.example.com）都可以访问这个Cookie
      */
     public void setDomain(String pattern) {
         domain = pattern.toLowerCase(Locale.ENGLISH); // IE allegedly needs this
@@ -241,6 +245,10 @@ public class Cookie implements Cloneable, Serializable {
      *            seconds; if negative, means the cookie is not stored; if zero,
      *            deletes the cookie
      * @see #getMaxAge
+     *
+     * 正数：表示Cookie的有效秒数。例如，maxAge = 3600 表示Cookie将在一小时后过期。
+     * 负数：表示Cookie是会话Cookie，在浏览器关闭时自动删除。
+     * 0：表示立即删除Cookie
      */
     public void setMaxAge(int expiry) {
         maxAge = expiry;
@@ -275,6 +283,8 @@ public class Cookie implements Cloneable, Serializable {
      * @param uri
      *            a <code>String</code> specifying a path
      * @see #getPath
+     *
+     * 路径限制：指定Cookie仅在特定路径下有效。例如，如果path设置为/，则Cookie在整个网站的所有路径下都有效；如果设置为/admin，则Cookie仅在/admin及其子路径下有效
      */
     public void setPath(String uri) {
         path = uri;
@@ -303,6 +313,8 @@ public class Cookie implements Cloneable, Serializable {
      *            server only when using a secure protocol; if
      *            <code>false</code>, sent on any protocol
      * @see #getSecure
+     *
+     * 用于指定Cookie是否只能通过HTTPS协议传输
      */
     public void setSecure(boolean flag) {
         secure = flag;
@@ -411,6 +423,8 @@ public class Cookie implements Cloneable, Serializable {
      * @param httpOnly  The new value of the flag
      *
      * @since Servlet 3.0
+     *
+     * 设置了HttpOnly属性，Cookie将无法通过JavaScript访问
      */
     public void setHttpOnly(boolean httpOnly) {
         this.httpOnly = httpOnly;

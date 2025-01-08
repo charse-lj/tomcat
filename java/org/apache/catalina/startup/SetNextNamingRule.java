@@ -88,7 +88,7 @@ public class SetNextNamingRule extends Rule {
      */
     @Override
     public void end(String namespace, String name) throws Exception {
-
+        super.end(namespace, name);
         // Identify the objects to be used
         Object child = digester.peek(0);
         Object parent = digester.peek(1);

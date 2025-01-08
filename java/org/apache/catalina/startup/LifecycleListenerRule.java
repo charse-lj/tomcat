@@ -91,7 +91,7 @@ public class LifecycleListenerRule extends Rule {
     @Override
     public void begin(String namespace, String name, Attributes attributes)
         throws Exception {
-
+        super.begin(namespace, name, attributes);
         Container c = (Container) digester.peek();
         Container p = null;
         Object obj = digester.peek(1);

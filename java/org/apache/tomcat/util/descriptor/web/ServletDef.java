@@ -16,18 +16,23 @@
  */
 package org.apache.tomcat.util.descriptor.web;
 
+import org.apache.tomcat.util.res.StringManager;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tomcat.util.res.StringManager;
-
 
 /**
  * Representation of a servlet definition for a web application, as represented
  * in a <code>&lt;servlet&gt;</code> element in the deployment descriptor.
+ * 用于描述 Servlet 的定义和配置,指代 Servlet 的元数据信息
+ * Servlet 名称：用于标识 Servlet 的唯一名称。
+ * Servlet 类名：Servlet 对应的 Java 类的全限定名。
+ * 初始化参数：用于初始化 Servlet 的参数。
+ * Servlet 映射：将 Servlet 映射到特定的 URL 路径上。
  */
 
 public class ServletDef implements Serializable {
@@ -35,7 +40,7 @@ public class ServletDef implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private static final StringManager sm =
-        StringManager.getManager(Constants.PACKAGE_NAME);
+            StringManager.getManager(Constants.PACKAGE_NAME);
 
     // ------------------------------------------------------------- Properties
 
@@ -156,7 +161,7 @@ public class ServletDef implements Serializable {
      * Add an initialization parameter to the set of parameters associated
      * with this servlet.
      *
-     * @param name The initialisation parameter name
+     * @param name  The initialisation parameter name
      * @param value The initialisation parameter value
      */
     public void addInitParameter(String name, String value) {
@@ -210,6 +215,7 @@ public class ServletDef implements Serializable {
     /**
      * Add a security-role-ref to the set of security-role-refs associated
      * with this servlet.
+     *
      * @param securityRoleRef The security role
      */
     public void addSecurityRoleRef(SecurityRoleRef securityRoleRef) {

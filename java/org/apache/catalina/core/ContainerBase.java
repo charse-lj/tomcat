@@ -138,12 +138,14 @@ public abstract class ContainerBase extends LifecycleMBeanBase
 
     /**
      * The child Containers belonging to this Container, keyed by name.
+     * 子容器.
      */
     protected final HashMap<String, Container> children = new HashMap<>();
 
 
     /**
      * The processor delay for this component.
+     * 用于控制 Valve 组件的后台处理延迟时间
      */
     protected int backgroundProcessorDelay = -1;
 
@@ -183,12 +185,14 @@ public abstract class ContainerBase extends LifecycleMBeanBase
 
     /**
      * The human-readable name of this Container.
+     * 容器名称.
      */
     protected String name = null;
 
 
     /**
      * The parent Container to which this Container is a child.
+     * 父容器.
      */
     protected Container parent = null;
 
@@ -201,6 +205,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase
 
     /**
      * The Pipeline object with which this Container is associated.
+     * 于定义请求处理流程。它负责管理一系列 Valve 组件，这些组件按顺序执行以处理请求。每个 Container（如 Engine、Host、Context 等）都有一个 Pipeline，而 StandardPipeline 是 Pipeline 的具体实现类
      */
     protected final Pipeline pipeline = new StandardPipeline(this);
 
@@ -220,8 +225,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase
     /**
      * The string manager for this package.
      */
-    protected static final StringManager sm =
-            StringManager.getManager(Constants.Package);
+    protected static final StringManager sm = StringManager.getManager(Constants.Package);
 
 
     /**
@@ -232,8 +236,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase
     /**
      * The property change support for this component.
      */
-    protected final PropertyChangeSupport support =
-            new PropertyChangeSupport(this);
+    protected final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
 
     /**
@@ -672,8 +675,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase
     @Override
     public void addChild(Container child) {
         if (Globals.IS_SECURITY_ENABLED) {
-            PrivilegedAction<Void> dp =
-                    new PrivilegedAddChild(child);
+            PrivilegedAction<Void> dp = new PrivilegedAddChild(child);
             AccessController.doPrivileged(dp);
         } else {
             addChildInternal(child);
@@ -693,8 +695,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase
 
         synchronized (children) {
             if (children.get(child.getName()) != null)
-                throw new IllegalArgumentException(
-                        sm.getString("containerBase.child.notUnique", child.getName()));
+                throw new IllegalArgumentException(sm.getString("containerBase.child.notUnique", child.getName()));
             child.setParent(this);  // May throw IAE
             children.put(child.getName(), child);
         }
@@ -941,8 +942,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase
         // 开启ContainerBackgroundProcessor线程用于调用子容器的backgroundProcess方法，默认情况下backgroundProcessorDelay=-1，不会启用该线程
         if (backgroundProcessorDelay > 0) {
             monitorFuture = Container.getService(ContainerBase.this).getServer()
-                    .getUtilityExecutor().scheduleWithFixedDelay(
-                            new ContainerBackgroundProcessorMonitor(), 0, 60, TimeUnit.SECONDS);
+                    .getUtilityExecutor().scheduleWithFixedDelay(new ContainerBackgroundProcessorMonitor(), 0, 60, TimeUnit.SECONDS);
         }
     }
 
@@ -967,8 +967,7 @@ public abstract class ContainerBase extends LifecycleMBeanBase
         setState(LifecycleState.STOPPING);
 
         // Stop the Valves in our pipeline (including the basic), if any
-        if (pipeline instanceof Lifecycle &&
-                ((Lifecycle) pipeline).getState().isAvailable()) {
+        if (pipeline instanceof Lifecycle && ((Lifecycle) pipeline).getState().isAvailable()) {
             ((Lifecycle) pipeline).stop();
         }
 
@@ -1108,7 +1107,6 @@ public abstract class ContainerBase extends LifecycleMBeanBase
      *                                  associated with a different Container
      */
     public synchronized void addValve(Valve valve) {
-        System.out.println(this.getClass() + " ddValve(Valve valve):" + valve);
         pipeline.addValve(valve);
     }
 

@@ -59,7 +59,7 @@ public class SetAllPropertiesRule extends Rule {
     @Override
     public void begin(String namespace, String nameX, Attributes attributes)
             throws Exception {
-
+        super.begin(namespace, nameX, attributes);
         for (int i = 0; i < attributes.getLength(); i++) {
             String name = attributes.getLocalName(i);
             if ("".equals(name)) {

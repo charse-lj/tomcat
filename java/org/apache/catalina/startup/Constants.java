@@ -35,6 +35,7 @@ public final class Constants {
     public static final String DefaultWebXml = "conf/web.xml";
     public static final String HostContextXml = "context.xml.default";
     public static final String HostWebXml = "web.xml.default";
+    //Tomcat 部署一个 WAR 文件时，它会在应用的 META-INF 目录下创建一个 war-tracker 文件，并将当前时间戳写入该文件
     public static final String WarTracker = "/META-INF/war-tracker";
 
     /**

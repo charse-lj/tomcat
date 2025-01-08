@@ -106,7 +106,7 @@ final class MemoryUserRule extends Rule {
     @Override
     public void begin(String namespace, String name, Attributes attributes)
         throws Exception {
-
+        super.begin(namespace, name, attributes);
         String username = attributes.getValue("username");
         if (username == null) {
             username = attributes.getValue("name");

@@ -35,6 +35,7 @@ import org.apache.juli.logging.LogFactory;
 
 /**
  * Represents a {@link org.apache.catalina.WebResourceSet} based on a directory.
+ * 允许将文件系统中的目录映射为 Web 应用的一部分
  */
 public class DirResourceSet extends AbstractFileResourceSet {
 

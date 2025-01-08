@@ -26,8 +26,8 @@ import java.util.Enumeration;
  *
  * @see Filter
  * @since Servlet 2.3
+ * Servlet容器用于在初始化期间将信息传递给Filter的Filter配置对象。
  */
-// Servlet容器用于在初始化期间将信息传递给Filter的Filter配置对象。
 public interface FilterConfig {
 
     /**

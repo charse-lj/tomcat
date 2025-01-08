@@ -60,7 +60,7 @@ public class CopyParentClassLoaderRule extends Rule {
     @Override
     public void begin(String namespace, String name, Attributes attributes)
         throws Exception {
-
+        super.begin(namespace, name, attributes);
         if (digester.getLogger().isDebugEnabled())
             digester.getLogger().debug("Copying parent class loader");
         Container child = (Container) digester.peek(0);

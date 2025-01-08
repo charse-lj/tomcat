@@ -27,6 +27,13 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-compiler-javac</artifactId>
+                        <version>1.8.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
@@ -75,4 +82,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 </project>
